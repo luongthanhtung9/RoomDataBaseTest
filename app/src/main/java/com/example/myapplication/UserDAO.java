@@ -1,8 +1,10 @@
 package com.example.myapplication;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -15,4 +17,15 @@ public interface UserDAO {
 
     @Insert(onConflict = IGNORE)
     void insertAll(User... users);
+
+    @Update
+    void updateUser(User user);
+
+    @Delete
+    void deleteUser(User user);
+
+    @Query("Select * from user where id like :id")
+    User fetch(int id);
+
+
 }

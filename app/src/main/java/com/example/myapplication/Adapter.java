@@ -14,6 +14,17 @@ import java.util.List;
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     private List<User> mListUsers;
     private Context mContext;
+    private OnItemClickListener onItemClickListener;
+
+    private OnItemLongClickListener longClickListener;
+
+    public void setLongClickListener(OnItemLongClickListener longClickListener) {
+        this.longClickListener = longClickListener;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
 
     public Adapter(List mListUsers, Context mContext) {
         this.mListUsers = mListUsers;
@@ -23,9 +34,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
 
-        return new ViewHolder(view);
+        return new ViewHolder(view, onItemClickListener, longClickListener);
     }
 
     @Override
@@ -43,13 +54,41 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     }
 
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView firstName, lastName, email;
-        public ViewHolder(@NonNull View itemView) {
+        OnItemClickListener onItemClickListener;
+        OnItemLongClickListener onItemLongClickListener;
+
+        public ViewHolder(@NonNull View itemView, OnItemClickListener onItemClickListener, OnItemLongClickListener longClickListener) {
             super(itemView);
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
             firstName = itemView.findViewById(R.id.first);
             lastName = itemView.findViewById(R.id.last);
             email = itemView.findViewById(R.id.txtemail);
+            this.onItemClickListener = onItemClickListener;
+            this.onItemLongClickListener = longClickListener;
         }
+
+
+        @Override
+        public void onClick(View view) {
+            onItemClickListener.viewOnclick(view, getAdapterPosition());
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            onItemLongClickListener.viewLongClick(view, getAdapterPosition());
+            return true;
+        }
+    }
+
+    public interface OnItemClickListener {
+        void viewOnclick(View v, int position);
+
+    }
+
+    public interface OnItemLongClickListener {
+        void viewLongClick(View v, int position);
     }
 }

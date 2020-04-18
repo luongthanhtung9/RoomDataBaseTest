@@ -12,15 +12,16 @@ import androidx.room.Room;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Adapter.OnItemLongClickListener, Adapter.OnItemClickListener {
     private static final String TAG = "MainActivity";
     FloatingActionButton mFab;
     RecyclerView mRecyclerView;
     Adapter adapter;
-    List<User> users;
+    List<User> users = new ArrayList<>();
     AppDataBase db;
 
     @Override
@@ -35,7 +36,14 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
 
-        updateUI();
+        users = db.userDAO().getAllUser();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new Adapter(users, MainActivity.this);
+        mRecyclerView.setAdapter(adapter);
+        //updateUI();
+
+        adapter.setLongClickListener(this);
+        adapter.setOnItemClickListener(this);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,33 +52,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        adapter.setOnItemClickListener(new Adapter.OnItemClickListener() {
-            @Override
-            public void viewOnclick(View v, int position) {
-                User user = users.get(position);
-                Intent intent = new Intent(MainActivity.this, Update.class);
-                intent.putExtra("id", user.getId());
-                startActivity(intent);
-
-            }
-        });
-
-        adapter.setLongClickListener(new Adapter.OnItemLongClickListener() {
-            @Override
-            public void viewLongClick(View v, int position) {
-                User user = users.get(position);
-                db.userDAO().deleteUser(user);
-                updateUI();
-            }
-        });
-
-
     }
 
     public void updateUI() {
+        users.clear();
         users = db.userDAO().getAllUser();
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(users, MainActivity.this);
         mRecyclerView.setAdapter(adapter);
+        adapter.setLongClickListener(this);
+        adapter.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void viewLongClick(View v, int position) {
+        User user = users.get(position);
+        db.userDAO().deleteUser(user);
+        updateUI();
+    }
+
+    @Override
+    public void viewOnclick(View v, int position) {
+        User user = users.get(position);
+        Intent intent = new Intent(MainActivity.this, Update.class);
+        intent.putExtra("id", user.getId());
+        startActivity(intent);
     }
 }

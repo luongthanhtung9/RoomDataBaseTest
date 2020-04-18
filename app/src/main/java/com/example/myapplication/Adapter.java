@@ -31,6 +31,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         this.mContext = mContext;
     }
 
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -38,6 +39,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         return new ViewHolder(view, onItemClickListener, longClickListener);
     }
+
+
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
@@ -61,23 +64,26 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         public ViewHolder(@NonNull View itemView, OnItemClickListener onItemClickListener, OnItemLongClickListener longClickListener) {
             super(itemView);
-            itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
+            this.onItemClickListener = onItemClickListener;
+            this.onItemLongClickListener = longClickListener;
             firstName = itemView.findViewById(R.id.first);
             lastName = itemView.findViewById(R.id.last);
             email = itemView.findViewById(R.id.txtemail);
-            this.onItemClickListener = onItemClickListener;
-            this.onItemLongClickListener = longClickListener;
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+
         }
 
 
         @Override
         public void onClick(View view) {
+            if(onItemClickListener!= null)
             onItemClickListener.viewOnclick(view, getAdapterPosition());
         }
 
         @Override
         public boolean onLongClick(View view) {
+            if (onItemLongClickListener!=null)
             onItemLongClickListener.viewLongClick(view, getAdapterPosition());
             return true;
         }

@@ -12,7 +12,6 @@ import androidx.room.Room;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,25 +21,21 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     Adapter adapter;
     List<User> users;
+    AppDataBase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
         mFab = findViewById(R.id.fab);
         mRecyclerView = findViewById(R.id.recycler_view);
-       // users = new ArrayList<>();
-        AppDataBase db = Room.databaseBuilder(getApplicationContext(),
+        db = Room.databaseBuilder(getApplicationContext(),
                 AppDataBase.class, "production")
-    .allowMainThreadQueries()
+                .allowMainThreadQueries()
                 .build();
 
-        users =  db.userDAO().getAllUser();
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new Adapter(users, MainActivity.this);
-        mRecyclerView.setAdapter(adapter);
+
+        updateUI();
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -49,5 +44,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        adapter.setOnItemClickListener(new Adapter.OnItemClickListener() {
+            @Override
+            public void viewOnclick(View v, int position) {
+                User user = users.get(position);
+                Intent intent = new Intent(MainActivity.this, Update.class);
+                intent.putExtra("id", user.getId());
+                startActivity(intent);
+
+            }
+        });
+
+        adapter.setLongClickListener(new Adapter.OnItemLongClickListener() {
+            @Override
+            public void viewLongClick(View v, int position) {
+                User user = users.get(position);
+                db.userDAO().deleteUser(user);
+                updateUI();
+            }
+        });
+
+
+    }
+
+    public void updateUI() {
+        users = db.userDAO().getAllUser();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new Adapter(users, MainActivity.this);
+        mRecyclerView.setAdapter(adapter);
     }
 }

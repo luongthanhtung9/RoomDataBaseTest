@@ -1,8 +1,7 @@
-package com.example.myapplication;
+package com.example.myapplication.view.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.myapplication.manager.AppDataBase;
+import com.example.myapplication.R;
+import com.example.myapplication.model.User;
 
 public class AddUser extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "AddUser";
@@ -50,10 +53,7 @@ public class AddUser extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-         db = Room.databaseBuilder(getApplicationContext(),
-                AppDataBase.class, "production")
-                .allowMainThreadQueries()
-                .build();
+         db = AppDataBase.getInstance(getApplicationContext());
         if (view.getId() == R.id.btn_adduser) {
             Log.d(TAG, "onClick: add " + mEdtEmail.getText().toString());
             db.userDAO().insertAll(new User(mEdtFirstName.getText().toString(),

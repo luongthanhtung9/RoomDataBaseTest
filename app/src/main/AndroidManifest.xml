@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".view.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,9 +18,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddUser"
+            android:name=".view.activity.AddUser"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Update"
+        <activity android:name=".view.activity.Update"
             android:theme="@style/AppTheme.NoActionBar"/>
 
     </application>

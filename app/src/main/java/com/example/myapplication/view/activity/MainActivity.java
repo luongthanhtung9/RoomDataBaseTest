@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,11 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
+
+import com.example.myapplication.view.adapter.Adapter;
+import com.example.myapplication.manager.AppDataBase;
+import com.example.myapplication.R;
+import com.example.myapplication.model.User;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -22,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.OnItemLon
     RecyclerView mRecyclerView;
     Adapter adapter;
     List<User> users = new ArrayList<>();
-    AppDataBase db;
+    private AppDataBase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +34,14 @@ public class MainActivity extends AppCompatActivity implements Adapter.OnItemLon
         setContentView(R.layout.activity_main);
         mFab = findViewById(R.id.fab);
         mRecyclerView = findViewById(R.id.recycler_view);
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDataBase.class, "production")
-                .allowMainThreadQueries()
-                .build();
-
-
-        users = db.userDAO().getAllUser();
+//        db.getI = Room.databaseBuilder(getApplicationContext(),
+//                AppDataBase.class, "production")
+//                .allowMainThreadQueries()
+//                .build();
+        db = AppDataBase.getInstance(getApplicationContext());
+        if(db != null) {
+            users = db.userDAO().getAllUser();
+        }
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new Adapter(users, MainActivity.this);
         mRecyclerView.setAdapter(adapter);

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,10 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.room.Room;
+
+import com.example.myapplication.manager.AppDataBase;
+import com.example.myapplication.R;
+import com.example.myapplication.model.User;
 
 public class Update extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Update";
@@ -51,10 +54,7 @@ public class Update extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDataBase.class, "production")
-                .allowMainThreadQueries()
-                .build();
+        db = AppDataBase.getInstance(getApplicationContext());
         if (view.getId() == R.id.btn_updateuser) {
             //Log.d(TAG, "onClick: add " + mEdtEmail.getText().toString());
             User user = db.userDAO().fetch(id);
